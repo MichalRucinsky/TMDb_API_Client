@@ -20,7 +20,7 @@ private var decoder: JSONDecoder = {
 private var session: URLSession = {
 	let config = URLSessionConfiguration.default
 	config.urlCache = URLCache.shared
-	config.waitsForConnectivity = true
+//	config.waitsForConnectivity = true
 	config.requestCachePolicy = .returnCacheDataElseLoad
 	return URLSession(configuration: config, delegate: nil, delegateQueue: nil)
 }()

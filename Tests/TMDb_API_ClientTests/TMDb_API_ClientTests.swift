@@ -6,7 +6,7 @@ final class TMDb_API_ClientTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(TMDb_API_Client().text, "Hello, World!")
+//        XCTAssertEqual(TMDb_API_Client().text, "Hello, World!")
     }
 
     static var allTests = [
