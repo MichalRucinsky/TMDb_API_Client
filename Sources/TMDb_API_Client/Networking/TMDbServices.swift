@@ -15,10 +15,6 @@ public enum TMDbServices {
     
     public var url: URL? {
 		
-		guard let apikey = TMDb_API_Client.apikey else {
-			fatalError("NO API is set. Set your api using TMDb_API_Client.apikey = YOURKEY")
-		}
-		
         var last = ""
         
         switch self {
@@ -32,19 +28,6 @@ public enum TMDbServices {
             last = "/tv/" + tvEndpoints
             break
         }
-        
-        let componentUrl = TMDbAPI().makeURL().appendingPathComponent(last)
-        guard var urlComponents = URLComponents(url: componentUrl, resolvingAgainstBaseURL: false) else {
-            return nil
-        }
-        
-		let queryItems = [URLQueryItem(name: "api_key", value: apikey)]
-        urlComponents.queryItems = queryItems
-        
-        //generate valid url
-        guard let url = urlComponents.url else {
-            return nil
-        }
-        return url
+        return TMDbAPI().makeURL().appendingPathComponent(last)
     }
 }

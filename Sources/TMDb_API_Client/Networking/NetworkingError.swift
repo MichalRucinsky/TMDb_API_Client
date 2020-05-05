@@ -15,14 +15,20 @@ public enum NetworkingError: Error {
     case invalidResponse
     case noData
     case serializationError
+	case other(Error)
     
-    public var description: String {
-        switch self {
-        case .apiError: return "Ooops, there is a problem with the api"
-        case .invalidEndpoint: return "Ooops, there is a problem with the endpoint"
-        case .invalidResponse: return "Ooops, there is a problem with the response"
-        case .noData: return "Ooops, there is a problem with the data"
-        case .serializationError: return "Ooops, there is a problem with the serialization process"
-        }
-    }
+	public var description: String {
+		switch self {
+			case .apiError: return "Ooops, there is a problem with the api"
+			case .invalidEndpoint: return "Ooops, there is a problem with the endpoint"
+			case .invalidResponse: return "Ooops, there is a problem with the response"
+			case .noData: return "Ooops, there is a problem with the data"
+			case .serializationError: return "Ooops, there is a problem with the serialization process"
+			case .other(let err): return err.localizedDescription
+		}
+	}
+	
+	static func map(_ error: Error) -> NetworkingError {
+		return (error as? NetworkingError) ?? .other(error)
+	}
 }

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+import Combine
+
+typealias Networking = (URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), Error>
 
 private var decoder: JSONDecoder = {
 	let decoder = JSONDecoder()
@@ -36,6 +39,7 @@ public protocol NetworkingRequest: NetworkingRequestBase {
 public extension NetworkingRequest {
     
     func parse(_ data: Data) -> ResponseType? {
+		
         do {
             let model: ResponseType = try decoder.decode(ResponseType.self, from: data)
             return model
@@ -43,7 +47,7 @@ public extension NetworkingRequest {
             return nil
         }
     }
-    
+	
 	func execute(completion: @escaping (Result<ResponseType, NetworkingError>) -> Void) {
         
         let request = self.data
@@ -83,4 +87,33 @@ public extension NetworkingRequest {
         
         task.resume()
     }
+	
+	//MARK: Combine
+	
+	func execute() -> AnyPublisher<ResponseType, NetworkingError> {
+		
+		let request = self.data
+		
+		guard let url = request.url else {
+			return Fail(error: NetworkingError.invalidEndpoint)
+				.eraseToAnyPublisher()
+		}
+		
+		var urlRequest = URLRequest(url: url)
+		urlRequest.httpMethod = request.method.rawValue
+		
+		return session.dataTaskPublisher(for: urlRequest)
+			.tryMap { response in
+				guard
+					let httpURLResponse = response.response as? HTTPURLResponse,
+					httpURLResponse.statusCode == 200
+					else {
+						throw NetworkingError.invalidResponse
+				}
+				return response.data
+		}
+			.decode(type: ResponseType.self, decoder: decoder)
+			.mapError { NetworkingError.map($0) }
+			.eraseToAnyPublisher()
+	}
 }

@@ -19,10 +19,17 @@ extension TMDbAPI {
     
     func makeURL() -> URL {
         
+		guard let apikey = TMDb_API_Client.apikey else {
+			fatalError("NO API is set. Set your api using TMDb_API_Client.apikey = YOURKEY")
+		}
+		
         var urlComponents = URLComponents()
         urlComponents.scheme = TMDbAPI.urlScheme
         urlComponents.host = TMDbAPI.urlHost
         urlComponents.path = TMDbAPI.urlPath
+		
+		let queryItems = [URLQueryItem(name: "api_key", value: apikey)]
+		urlComponents.queryItems = queryItems
         return urlComponents.url!
     }
 }
